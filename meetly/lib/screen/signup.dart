@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meetly/core/utils/snackbar/snakbar.dart';
 import 'package:meetly/provider/auth_provider.dart';
 import 'package:meetly/screen/home.dart';
+import 'package:meetly/widget/navbar.dart';
 
 class SignupScreen extends ConsumerWidget {
   const SignupScreen({super.key});
@@ -14,15 +16,20 @@ class SignupScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
-            onPressed: () async{
-              final authRepo=ref.read(authRepositoryProvider);
-              final user=await authRepo.SiginWithGoogle();
+            onPressed: () async {
+              final authRepo = ref.read(authRepositoryProvider);
+              final user = await authRepo.SiginWithGoogle();
               print(user);
-              if(user != null){
+              if (user != null) {
                 // Navigate to home screen
+                ShowSnackbar(
+                  context: context,
+                  type: SnackBarType.success,
+                  message: 'Signup successful',
+                );
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  MaterialPageRoute(builder: (context) => const NavbarWidget()),
                 );
               }
             },

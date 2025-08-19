@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meetly/model/user_model.dart';
 
 class AuthServices {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static bool isInitializ = false;
@@ -96,4 +96,18 @@ class AuthServices {
       print(e);
     }
   }
+
+  Future<void> signOut() async {
+    try {
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static User? getCurrentUser() {
+    return _auth.currentUser;
+  }
+
 }

@@ -15,4 +15,8 @@ class AuthRepository {
   Future<UserModel?> getUserData(String uid) async {
     return await _authServices.getUserData(uid);
   }
+
+  Future<void> signOut() async {
+    await _authServices.signOut();
+  }
 }
