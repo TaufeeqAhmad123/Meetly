@@ -12,7 +12,20 @@
           "package_name": "com.example.meetly"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "504501695129-85rtll7skl15ij59sd1tfo42nbfo2e9m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.meetly",
+            "certificate_hash": "8ce6289604c8e4bdc9142b7af5f901ffa35aa55b"
+          }
+        },
+        {
+          "client_id": "504501695129-d6kqmvp6hif9ob28cu2m58tf1hnn2jp4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCPrmSntT1HLCuarjabHA-xy-T4lm7cVek"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504501695129-d6kqmvp6hif9ob28cu2m58tf1hnn2jp4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "504501695129-epln6s95m16b6inssnsae8bbcik46c7d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.meetly"
+              }
+            }
+          ]
         }
       }
     }
