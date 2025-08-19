@@ -20,11 +20,11 @@ class HomeScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Name: ${user.name}"),
-                  Text("Bio: ${user.bio}"),
-                  Text("Bio: ${user.userName}"),
-                  Text("Email: ${user.email}"),
-                  Text("UID: ${user.uid}"),
+                  Text("Name: ${user.name}",style: TextStyle(fontFamily: "Mont",fontWeight: FontWeight.bold,fontSize: 22),),
+                  Text("Bio: ${user.bio}",style: TextStyle(fontFamily: "Mont"),),
+                  Text("Bio: ${user.userName}",style: TextStyle(fontFamily: "Mont"),),
+                  Text("Email: ${user.email}",style: TextStyle(fontFamily: "Mont"),),
+                  Text("UID: ${user.uid}",style: TextStyle(fontFamily: "Mont"),),
                   CircleAvatar(
                     backgroundImage: NetworkImage(user.image),
                   )

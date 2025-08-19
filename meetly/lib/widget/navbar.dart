@@ -1,56 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:meetly/screen/home.dart';
+import 'package:meetly/screen/profile_screen.dart';
 
-class NavbarWidget extends StatefulWidget {
+final bottomNavProvider = StateProvider<int>((ref) => 0);
+
+class NavbarWidget extends ConsumerWidget {
   const NavbarWidget({super.key});
 
   @override
-  State<NavbarWidget> createState() => _NavbarWidgetState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIndex = ref.watch(bottomNavProvider);
 
-class _NavbarWidgetState extends State<NavbarWidget> {
-  int _currentIndex = 0;
-  List<Widget> _pages = [
-    const HomeScreen(),
-    const HomeScreen(),
-    const HomeScreen(),
-    const HomeScreen(),
+    final List<Widget> pages = [
+      const HomeScreen(),
+      const HomeScreen(),
+      const HomeScreen(),
+      const ProfileScreen(),
+    ];
 
+    final List<String> icons = [
+      "assets/icon/home.svg",
+      "assets/icon/chat.svg",
+      "assets/icon/setting.svg",
+      "assets/icon/user.svg",
+    ];
 
-  ];  
-
-  @override
-  Widget build(BuildContext context) {
-    return  Scaffold(
-      body: _pages[_currentIndex],
+    return Scaffold(
+      body: pages[selectedIndex], // 👈 switch pages here
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-
-        items:  [
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/icon/home.svg'),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/icon/chat.svg'),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/icon/setting.svg'),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/icon/user.svg'),
-            label: 'Profile',
-          ),
-        ],
-         // Set the current index based on your logic
+        currentIndex: selectedIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          ref.read(bottomNavProvider.notifier).state =
+              index; // 👈 updates screen
         },
+        items: List.generate(icons.length, (index) {
+          return BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              icons[index],
+              color: selectedIndex == index ? Colors.black : Colors.grey,
+              width: 28,
+              height: 28,
+            ),
+            label: "",
+          );
+        }),
       ),
     );
   }
