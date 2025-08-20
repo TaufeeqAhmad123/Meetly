@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:meetly/screen/home.dart';
+import 'package:meetly/screen/join_meeting_screen.dart';
 import 'package:meetly/screen/profile_screen.dart';
 
 final bottomNavProvider = StateProvider<int>((ref) => 0);
@@ -14,10 +15,10 @@ class NavbarWidget extends ConsumerWidget {
     final selectedIndex = ref.watch(bottomNavProvider);
 
     final List<Widget> pages = [
-       HomeScreen(),
-       HomeScreen(),
-       HomeScreen(),
-       ProfileScreen(),
+      HomeScreen(),
+      JoinMeetingScreen(),
+      HomeScreen(),
+      ProfileScreen(),
     ];
 
     final List<String> icons = [

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:meetly/core/utils/const/color.dart';
 
-class CustomButton extends StatelessWidget {
+class customButton extends StatelessWidget {
   final String data;
   Function()? onPressed;
-  CustomButton({super.key, required this.data, required this.onPressed});
+  customButton({super.key, required this.data, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class CustomButton extends StatelessWidget {
 
           style: ElevatedButton.styleFrom(
             fixedSize: Size(double.maxFinite, 55),
-           backgroundColor: const Color.fromARGB(255, 15, 34, 248),
+           backgroundColor: kblueColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),

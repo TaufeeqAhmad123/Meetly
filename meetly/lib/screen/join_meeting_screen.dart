@@ -1,21 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:meetly/core/utils/const/color.dart';
+import 'package:meetly/provider/join_meeting_provider.dart';
 import 'package:meetly/provider/meeting_provider.dart';
 import 'package:meetly/widget/custom_button.dart';
 import 'package:meetly/widget/start_meeting_resource.dart';
 
-class NewmeetingScreen extends ConsumerStatefulWidget {
-  const NewmeetingScreen({super.key});
+class JoinMeetingScreen extends ConsumerStatefulWidget {
+  const JoinMeetingScreen({super.key});
 
   @override
-  ConsumerState<NewmeetingScreen> createState() => _NewmeetingScreenState();
+  ConsumerState<JoinMeetingScreen> createState() => _JoinMeetingScreenState();
 }
 
-class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
-  late TextEditingController _meetingIdController;
+class _JoinMeetingScreenState extends ConsumerState<JoinMeetingScreen> {
+    late TextEditingController _meetingIdController;
   late TextEditingController _nameController;
 
   @override
@@ -24,7 +26,7 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
     _nameController = TextEditingController(
       text: FirebaseAuth.instance.currentUser?.displayName ?? '',
     );
-    _meetingIdController = TextEditingController(text: meetingState.meetingId);
+    _meetingIdController = TextEditingController();
     super.initState();
   }
 
@@ -35,12 +37,12 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
     _nameController.dispose();
     super.dispose();
   }
-
   @override
-  Widget build(BuildContext context) {
-    final meetingState = ref.watch(meetingProvider);
-    return Scaffold(
-      appBar: AppBar(
+  Widget build(BuildContext context,) {
+    final state=ref.watch(JoinmeetingProvider);
+    final notifier=ref.read(JoinmeetingProvider.notifier);
+    return  Scaffold(
+       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -60,7 +62,7 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
             ),
             SizedBox(width: 25),
             Text(
-              'Start a meeting',
+              'Join a meeting',
               style: GoogleFonts.inter(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
@@ -70,17 +72,24 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
           ],
         ),
       ),
-      body: Column(
+        body: Column(
         children: [
           SizedBox(height: 20),
           SizedBox(
             height: 50,
             child: TextField(
-              // controller: _meetingIdController,
-              readOnly: true,
+              controller: _meetingIdController,
+            
+              keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
-                hintText: "Meeting Id : ${_meetingIdController.text}",
+                error: state.error != null
+                    ? Text(
+                        state.error!,
+                        style: TextStyle(color: Colors.red),
+                      )
+                    : null,
+                hintText: "Meeting Id : ",
                 hintStyle: GoogleFonts.inter(
                   fontSize: 18,
                   fontWeight: FontWeight.w400,
@@ -94,7 +103,7 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
                 focusedBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
               ),
-              enabled: false, // keeps it disabled
+           // keeps it disabled
             ),
           ),
           SizedBox(height: 20),
@@ -117,45 +126,44 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
             ),
           ),
           SizedBox(height: 20),
-          SwitchListTile(
-            title: Text(
-              'Mute microphone',
-              style: GoogleFonts.inter(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            activeColor: korangColor,
-            inactiveThumbColor: korangColor,
-            activeThumbColor: korangColor,
-            value: meetingState.isMicOff,
-            onChanged: (value) {
-              ref.read(meetingProvider.notifier).toggleMic(value);
-            },
-          ),
-          SwitchListTile(
-            title: Text(
-              'Turn off camera',
-              style: GoogleFonts.inter(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            activeColor: korangColor,
-            inactiveThumbColor: korangColor,
-            activeThumbColor: korangColor,
-            value: meetingState.isCameraOff,
-            onChanged: (value) {
-              ref.read(meetingProvider.notifier).toggleCamera(value);
+          customButton(
+            data: 'Join Meeting',
+            onPressed: () {
+              joinMeeting(ref, context, _nameController, _meetingIdController);
             },
           ),
           SizedBox(height: 20),
-          customButton(
-            data: 'Start a Meeting',
-            onPressed: () {
-              StartMeeting(ref, context, _nameController);
-            },
+          SwitchListTile(
+            title: Text(
+              "Don't connect to audio",
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            activeColor: korangColor,
+            inactiveThumbColor: korangColor,
+            activeThumbColor: korangColor,
+            value: state.isMicOff,
+            onChanged: notifier.toggleMic
           ),
+
+          SwitchListTile(
+            title: Text(
+              'Turn off my video',
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            activeColor: korangColor,
+            inactiveThumbColor: korangColor,
+            activeThumbColor: korangColor,
+            value: state.isCameraOff,
+            onChanged:notifier.toggleCamera
+          ),
+          SizedBox(height: 20),
+          
         ],
       ),
     );

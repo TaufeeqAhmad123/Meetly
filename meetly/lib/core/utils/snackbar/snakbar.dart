@@ -15,16 +15,18 @@ void ShowSnackbar({
       CherryToast.success(
         title: Text(
           'Success',
-          style: GoogleFonts.montez(
+          style: GoogleFonts.inter(
             color: Colors.black,
             fontWeight: FontWeight.bold,
+            fontSize: 22
           ),
         ),
         description: Text(
           message,
-          style: GoogleFonts.montez(
+          style: GoogleFonts.inter(
             color: Colors.black,
             fontWeight: FontWeight.bold,
+            fontSize: 18
           ),
         ),
         toastDuration: Duration(milliseconds: 2000),
