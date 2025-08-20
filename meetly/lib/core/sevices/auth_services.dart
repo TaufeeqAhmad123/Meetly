@@ -67,7 +67,7 @@ class AuthServices {
   Future<void> _saveUserToFirestore(User user) async {
     try {
       final userData = _firestore.collection('user').doc(user.uid);
-      //check if user data already store so do not store it again just login 
+      //check if user data already store so do not store it again just login e 
       final snapshotData = await userData.get();
 
       if (!snapshotData.exists) {
@@ -82,7 +82,9 @@ class AuthServices {
           FCMToken: null,
         ).toMap();
         await userData.set(data);
+        
       }
+      return ;
     } catch (e) {
       print(e);
     }

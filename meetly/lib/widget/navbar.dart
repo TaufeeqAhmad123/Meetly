@@ -14,10 +14,10 @@ class NavbarWidget extends ConsumerWidget {
     final selectedIndex = ref.watch(bottomNavProvider);
 
     final List<Widget> pages = [
-      const HomeScreen(),
-      const HomeScreen(),
-      const HomeScreen(),
-      const ProfileScreen(),
+       HomeScreen(),
+       HomeScreen(),
+       HomeScreen(),
+       ProfileScreen(),
     ];
 
     final List<String> icons = [

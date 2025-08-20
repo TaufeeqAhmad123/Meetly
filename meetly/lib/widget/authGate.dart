@@ -9,23 +9,21 @@ class Authgate extends ConsumerWidget {
   const Authgate({super.key});
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
-    final authState=ref.read(authStateChaneProvider);
-    return  Scaffold(
-      body: authState.when(data: (user){
-          if(user!=null){
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateChaneProvider);
+    return Scaffold(
+      body: authState.when(
+        data: (user) {
+          if (user != null) {
             return NavbarWidget();
-          }else{
+          } else {
             return SignupScreen();
           }
         },
-         loading: () => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
-        error: (e, _) => Scaffold(
-          body: Center(child: Text('Error: $e')),
-        ),
-         ),
+        loading: () =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
+      ),
     );
   }
 }
