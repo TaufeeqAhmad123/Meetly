@@ -67,19 +67,22 @@ class AuthServices {
   Future<void> _saveUserToFirestore(User user) async {
     try {
       final userData = _firestore.collection('user').doc(user.uid);
+      //check if user data already store so do not store it again just login 
+      final snapshotData = await userData.get();
 
-      final data = UserModel(
-        name: user.displayName ?? '',
-        uid: user.uid,
-        email: user.email ?? '',
-        userName: user.email?.split('@')[0] ?? '',
-        bio: 'Hey there! I am using Meetly',
-        image: user.photoURL ?? '',
-        date: DateTime.now(),
-        FCMToken: null,
-      ).toMap();
-
-      await userData.set(data);
+      if (!snapshotData.exists) {
+        final data = UserModel(
+          name: user.displayName ?? '',
+          uid: user.uid,
+          email: user.email ?? '',
+          userName: user.email?.split('@')[0] ?? '',
+          bio: 'Hey there! I am using Meetly',
+          image: user.photoURL ?? '',
+          date: DateTime.now(),
+          FCMToken: null,
+        ).toMap();
+        await userData.set(data);
+      }
     } catch (e) {
       print(e);
     }
@@ -91,7 +94,7 @@ class AuthServices {
           .collection('user')
           .doc(uid)
           .get();
-          return UserModel.fromDocument(snapshot);
+      return UserModel.fromDocument(snapshot);
     } catch (e) {
       print(e);
     }
@@ -109,5 +112,4 @@ class AuthServices {
   static User? getCurrentUser() {
     return _auth.currentUser;
   }
-
 }

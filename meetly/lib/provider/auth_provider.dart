@@ -8,8 +8,13 @@ final authServiceProvider = Provider<AuthServices>((ref) {
   return AuthServices();
 });
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepository(ref.watch(authServiceProvider));
+  return AuthRepository(ref.watch(authServiceProvider,), FirebaseAuth.instance);
 });
+
+final authStateChaneProvider = StreamProvider<User?>((ref) {
+  return ref.watch(authRepositoryProvider).authStateChange;
+});
+
 
 final userDataProvider = FutureProvider<UserModel?>((ref) async {
   final authRepo = ref.watch(authRepositoryProvider);

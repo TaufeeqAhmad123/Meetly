@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meetly/firebase_options.dart';
-import 'package:meetly/screen/signup.dart';
+import 'package:meetly/widget/authGate.dart';
 
 
 void main()async {
@@ -21,7 +21,8 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context ) {
+    
     return ProviderScope(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: SignupScreen(),
+        home: Authgate()
       ),
     );
   }
