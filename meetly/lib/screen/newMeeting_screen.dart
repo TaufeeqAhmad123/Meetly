@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:meetly/provider/meeting_provider.dart';
 import 'package:meetly/widget/custom_button.dart';
+import 'package:meetly/widget/start_meeting_resource.dart';
 
 class NewmeetingScreen extends ConsumerStatefulWidget {
   const NewmeetingScreen({super.key});
@@ -116,6 +117,13 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
           ),
           SizedBox(height: 20),
           SwitchListTile(
+            title: Text(
+              'Mute microphone',
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             activeColor: Colors.green,
             inactiveThumbColor: Colors.black,
             activeThumbColor: Colors.green,
@@ -125,6 +133,13 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
             },
           ),
           SwitchListTile(
+            title: Text(
+              'Turn off camera',
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             activeColor: Colors.green,
             inactiveThumbColor: Colors.black,
             activeThumbColor: Colors.green,
@@ -137,7 +152,7 @@ class _NewmeetingScreenState extends ConsumerState<NewmeetingScreen> {
           CustomButton(
             data: 'Start a Meeting',
             onPressed: () {
-              // Start the meeting
+              StartMeeting(ref, context, _nameController);
             },
           ),
         ],
