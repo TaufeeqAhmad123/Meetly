@@ -10,6 +10,7 @@ class WaitingRoomScreen extends ConsumerWidget {
   final String userId;
   final String roomId;
   final bool isMicoff, iscameraOff;
+
   const WaitingRoomScreen({
     super.key,
     required this.userId,
@@ -20,52 +21,69 @@ class WaitingRoomScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final approvalState = ref.watch(
-      approvalProvider((roomId, userId )),
-    );
+    // ✅ Listen only for changes in approval state
+    ref.listen(approvalProvider((roomId, userId)), (previous, next) {
+      next.whenData((data) {
+        final status = data?['status'];
+        if (status == 'approved') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MeetingRoomScreen(
+                name: data?['name'] ?? '',
+                roomId: roomId,
+                isMicOff: isMicoff,
+                isCameraOff: iscameraOff,
+                isHost: false,
+              ),
+            ),
+          );
+        } else if (status == 'rejected') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Your request has been rejected")),
+          );
+        }
+      });
+    });
+
+    // ✅ Just watch to build UI
+    final approvalState = ref.watch(approvalProvider((roomId, userId)));
+
     return approvalState.when(
       data: (data) {
         final status = data?['status'];
-        if (status == 'approved') {
-          WidgetsBinding.instance.addPersistentFrameCallback((_) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MeetingRoomScreen(
-                  name: data?['name'] ?? '',
-                  roomId: roomId,
-                  isMicOff: isMicoff,
-                  isCameraOff: iscameraOff,
-                  isHost: false,
-                ),
-              ),
-            );
-          });
-        } else if (status == 'rejected') {
+        if (status == 'rejected') {
           return Scaffold(
             backgroundColor: kwhiteColor,
-            body: Center(child: Text('Your request has been rejected')),
+            body: Center(
+              child: Text(
+                'Your request has been rejected',
+                style: GoogleFonts.inter(fontSize: 18),
+              ),
+            ),
           );
         }
+
+        // Default waiting screen
         return Scaffold(
           backgroundColor: kwhiteColor,
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Center(
-                child: Text(
-                  'Your request is pending approval',
-                  style: GoogleFonts.inter(fontSize: 18),
-                ),
+              Text(
+                'Your request is pending approval',
+                style: GoogleFonts.inter(fontSize: 18),
               ),
-              SizedBox(height: 10,),
-              BouncingDotIndicator(),
+              const SizedBox(height: 10),
+              const BouncingDotIndicator(),
             ],
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, stack) =>
+          Scaffold(body: Center(child: Text('Error: $error'))),
     );
   }
 }

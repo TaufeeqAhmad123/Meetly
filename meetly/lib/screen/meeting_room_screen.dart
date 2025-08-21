@@ -48,6 +48,7 @@ class _MeetingRoomScreenState extends State<MeetingRoomScreen> {
               userName: widget.name,
               conferenceID: widget.roomId,
               config: ZegoUIKitPrebuiltVideoConferenceConfig()
+
                 ..turnOnCameraWhenJoining = !widget.isCameraOff
                 ..turnOnMicrophoneWhenJoining = !widget.isMicOff
                 ..layout = ZegoLayout.gallery(
