@@ -23,9 +23,9 @@ class WaitingApprovalScreen extends StatelessWidget {
         if (snapshot.hasError) {
           return const Center(child: Text('Error'));
         }
-       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-  return const Center(child: Text('No users waiting to join'));
-}
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text('No users waiting to join'));
+        }
 
         final data = snapshot.data!.docs;
         return Scaffold(
@@ -37,7 +37,7 @@ class WaitingApprovalScreen extends StatelessWidget {
           ),
           backgroundColor: kwhiteColor,
           body: data.isEmpty
-              ? Center(child: Text('No users waiting to join'))
+              ? Scaffold(body: Center(child: Text('No users waiting to join')))
               : ListView.builder(
                   itemCount: data.length,
                   itemBuilder: (context, index) {
@@ -52,9 +52,11 @@ class WaitingApprovalScreen extends StatelessWidget {
                         children: [
                           IconButton(
                             onPressed: () {
+                               Navigator.pop(context);
                               data[index].reference.update({
                                 'status': 'approved',
                               });
+                              Navigator.pop(context);
                             },
                             icon: const Icon(Icons.check),
                           ),
@@ -63,6 +65,7 @@ class WaitingApprovalScreen extends StatelessWidget {
                               data[index].reference.update({
                                 'status': 'rejected',
                               });
+                              Navigator.pop(context);
                             },
                             icon: const Icon(Icons.close),
                           ),

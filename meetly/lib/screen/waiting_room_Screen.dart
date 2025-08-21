@@ -5,6 +5,7 @@ import 'package:meetly/core/utils/const/color.dart';
 import 'package:meetly/provider/approval_provider.dart';
 import 'package:meetly/screen/meeting_room_screen.dart';
 import 'package:meetly/widget/bouncing_dot.dart';
+import 'package:meetly/widget/custom_button.dart';
 
 class WaitingRoomScreen extends ConsumerWidget {
   final String userId;
@@ -55,11 +56,19 @@ class WaitingRoomScreen extends ConsumerWidget {
         if (status == 'rejected') {
           return Scaffold(
             backgroundColor: kwhiteColor,
-            body: Center(
-              child: Text(
-                'Your request has been rejected',
-                style: GoogleFonts.inter(fontSize: 18),
-              ),
+            body: Column(
+              children: [
+                Center(
+                  child: Text(
+                    'Your request has been rejected',
+                    style: GoogleFonts.inter(fontSize: 18),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                customButton(data: 'Go to home', onPressed: () {
+                  Navigator.pop(context);
+                }),
+              ],
             ),
           );
         }
