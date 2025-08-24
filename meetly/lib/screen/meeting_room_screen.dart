@@ -125,7 +125,7 @@ class _MeetingRoomScreenState extends ConsumerState<MeetingRoomScreen> {
                               onPressed: () async {
                                 final roomData = await FirebaseFirestore
                                     .instance
-                                    .collection('room')
+                                    .collection('rooms')
                                     .doc(widget.roomId)
                                     .get();
                                 final hostId = roomData['hostid'] ?? "";
@@ -139,10 +139,22 @@ class _MeetingRoomScreenState extends ConsumerState<MeetingRoomScreen> {
                                     ),
                                   ),
                                   builder: (context) {
-                                    return Container();
+                                    return _buildList(hostId, allUsers);
                                   },
                                 );
                               },
+                            ),
+                            Positioned(
+                              top: 9,
+                              right: 15,
+                              child: Text(
+                                ZegoUIKit().getAllUsers().length.toString(),
+                                style: GoogleFonts.inter(
+                                  color: kwhiteColor,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -231,25 +243,25 @@ class _MeetingRoomScreenState extends ConsumerState<MeetingRoomScreen> {
                           }
                           final userData =
                               snapshot.data!.data() as Map<String, dynamic>;
-                     String? photoUrl = userData['photoURL'];
-                          if (photoUrl == null &&
+                          String? image = userData['image'];
+                          if (image == null &&
                               user.id ==
                                   FirebaseAuth.instance.currentUser?.uid) {
-                            photoUrl = FirebaseAuth.instance.currentUser?.photoURL;
-                            
+                            image = FirebaseAuth.instance.currentUser?.photoURL;
                           }
                           return CircleAvatar(
                             backgroundColor: kblueColor,
-                           backgroundImage: photoUrl != null
-                                ? NetworkImage(photoUrl)
-                                : AssetImage('assets/images/user.png')
-                                    as ImageProvider,
+                            backgroundImage: image != null
+                                ? NetworkImage(image)
+                                : NetworkImage(
+                                    'https://www.google.com/imgres?q=person%20icon&imgurl=https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F4042%2F4042171.png&imgrefurl=https%3A%2F%2Fwww.flaticon.com%2Ffree-icon%2Fman_4042171&docid=mnlekyYVlPp3BM&tbnid=dPYSfdgyd0DI-M&vet=12ahUKEwi_us_VmqOPAxW6_gIHHVrLMaIQM3oECCUQAA..i&w=512&h=512&hcb=2&ved=2ahUKEwi_us_VmqOPAxW6_gIHHVrLMaIQM3oECCUQAA',
+                                  ),
                             radius: 20,
                           );
                         },
                       ),
                       title: Text(
-                        user.name,
+                        _getUserDisplayName(user, isHost),
                         style: GoogleFonts.inter(
                           color: kwhiteColor,
                           fontSize: 18,
@@ -266,19 +278,7 @@ class _MeetingRoomScreenState extends ConsumerState<MeetingRoomScreen> {
                               ),
                             )
                           : null,
-                      trailing: isHost
-                          ? null
-                          : IconButton(
-                              icon: Icon(
-                                Icons.remove_circle,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {
-                                ref
-                                    .read(meetingRoomProvider.notifier)
-                                    .removeUser(user);
-                              },
-                            ),
+                      trailing: _userStatusIcon(user)
                     );
                   },
                 );
@@ -287,6 +287,108 @@ class _MeetingRoomScreenState extends ConsumerState<MeetingRoomScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  String _getUserDisplayName(ZegoUIKitUser user, bool isHost) {
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final isCurrentUser = user.id == currentUserId;
+    String displayName = user.name;
+
+    if (isCurrentUser) {
+      displayName += ' (You)';
+    }
+    if (isHost) {
+      displayName += ' (Host)';
+    }
+    return displayName;
+  }
+
+  Widget _userStatusIcon(ZegoUIKitUser user) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.isHost && user.id != FirebaseAuth.instance.currentUser?.uid)
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: IconButton(
+              onPressed: ()=>_showUserRemoveDialog(user),
+              icon: Icon(Icons.remove_circle, color: Colors.yellow, size: 16),
+            ),
+          ),
+
+        ValueListenableBuilder(
+          valueListenable: user.microphone,
+          builder: (_, isMicOn, _) => Icon(
+            isMicOn ? Icons.mic : Icons.mic_off,
+            color: kwhiteColor,
+            size: 30,
+          ),
+        ),
+        SizedBox(width: 10),
+        ValueListenableBuilder(
+          valueListenable: user.camera,
+          builder: (_, isCamera, _) => Icon(
+            isCamera ? Icons.videocam : Icons.videocam_off,
+            color: kwhiteColor,
+            size: 30,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showUserRemoveDialog(ZegoUIKitUser user) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(
+            'Remove User',
+            style: GoogleFonts.inter(
+              color: kwhiteColor,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            'Are you sure you want to remove ${user.name} from the meeting?',
+            style: GoogleFonts.inter(
+              color: kwhiteColor,
+              fontSize: 16,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                ref.read(meetingRoomProvider.notifier).removeUser(user);
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Remove',
+                style: GoogleFonts.inter(
+                  color: kwhiteColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.inter(
+                  color: kwhiteColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
